@@ -28,6 +28,14 @@ class _PostListState extends State<PostList>
 
   Future<void> _load({bool refresh = false}) async {
     if (_busy) return;
+    if (widget.userId != null && widget.userId! < 0) {
+      setState(() {
+        _posts = [];
+        _error = null;
+        _hasMore = false;
+      });
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;

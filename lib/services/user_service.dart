@@ -6,6 +6,7 @@ import '../models/user.dart';
 
 class UserService {
   static final instance = UserService();
+  static const _registeredUsersKey = 'registeredUsers';
   final http.Client _client;
   User? currentUser;
   final Map<int, User> _users = {};
@@ -13,6 +14,12 @@ class UserService {
   UserService({http.Client? client}) : _client = client ?? http.Client();
 
   Future<User> login(String username, String password) async {
+    final localUser = await _loginRegisteredUser(username, password);
+    if (localUser != null) {
+      currentUser = localUser;
+      return localUser;
+    }
+
     final response = await _client
         .post(
           Uri.parse('$host/auth/login'),
@@ -32,6 +39,58 @@ class UserService {
     await _save(user, data);
     currentUser = user;
     return user;
+  }
+
+  Future<User> register({
+    required String firstName,
+    required String lastName,
+    required String mobileNumber,
+    required String username,
+    required String password,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final registeredUsers = _registeredUsers(prefs);
+    if (registeredUsers.any((user) => user['username'] == username)) {
+      throw StateError('That username is already registered.');
+    }
+
+    final user = User(
+      id: -(DateTime.now().millisecondsSinceEpoch),
+      userName: username,
+      firstName: firstName,
+      lastName: lastName,
+      email: '$username@local.gossipers',
+    );
+    registeredUsers.add({
+      ...user.toJson(),
+      'mobileNumber': mobileNumber,
+      'password': password,
+    });
+    await prefs.setString(_registeredUsersKey, jsonEncode(registeredUsers));
+    return user;
+  }
+
+  Future<User?> _loginRegisteredUser(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    final registeredUsers = _registeredUsers(prefs);
+    for (final data in registeredUsers) {
+      if (data['username'] == username && data['password'] == password) {
+        return User.fromJson(data);
+      }
+    }
+    return null;
+  }
+
+  List<Map<String, dynamic>> _registeredUsers(SharedPreferences prefs) {
+    final raw = prefs.getString(_registeredUsersKey);
+    if (raw == null) return [];
+    try {
+      return (jsonDecode(raw) as List)
+          .map((entry) => Map<String, dynamic>.from(entry as Map))
+          .toList();
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<void> _save(User user, Map<String, dynamic> tokens) async {

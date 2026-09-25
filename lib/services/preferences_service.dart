@@ -10,11 +10,13 @@ class PreferencesService extends ChangeNotifier {
 
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
-    final name = prefs.getString('themeMode');
-    themeMode.value = ThemeMode.values.firstWhere(
-      (mode) => mode.name == name,
-      orElse: () => ThemeMode.system,
+    final stored = prefs.getString('themeMode');
+    final resolved = ThemeMode.values.firstWhere(
+      (mode) => mode.name == stored,
+      orElse: () => ThemeMode.light,
     );
+    themeMode.value = resolved;
+    await prefs.setString('themeMode', themeMode.value.name);
   }
 
   Future<void> setTheme(ThemeMode mode) async {

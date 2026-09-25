@@ -1,3 +1,3 @@
-# cando_mobprog
+# divina
 
 A new Flutter project.

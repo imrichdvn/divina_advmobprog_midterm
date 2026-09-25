@@ -1,7 +1,8 @@
-import 'package:cando_mobprog/constants.dart';
-import 'package:cando_mobprog/widgets/custom_font.dart';
-import 'package:cando_mobprog/widgets/custom_inkwell_button.dart';
-import 'package:cando_mobprog/widgets/custom_textformfield.dart';
+import 'package:divina/constants.dart';
+import 'package:divina/widgets/custom_font.dart';
+import 'package:divina/widgets/custom_inkwell_button.dart';
+import 'package:divina/widgets/custom_textformfield.dart';
+import 'package:divina/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -25,8 +26,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // Password visibility states
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
+  bool isRegistering = false;
 
-  void register() {
+  Future<void> register() async {
     // TODO: Create your own validation
     // Get values from controllers
     String firstname = firstnameController.text.trim();
@@ -151,12 +153,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    // If all validations pass
-    customDialog(
-      context,
-      title: 'Success',
-      content: 'Registration successful!',
-    );
+    setState(() => isRegistering = true);
+    try {
+      await UserService.instance.register(
+        firstName: firstname,
+        lastName: lastname,
+        mobileNumber: mobilenum,
+        username: username,
+        password: password,
+      );
+      if (!mounted) return;
+      customDialog(
+        context,
+        title: 'Success',
+        content: 'Registration successful! You can now sign in.',
+      );
+    } catch (error) {
+      if (mounted) {
+        customDialog(
+          context,
+          title: 'Error',
+          content: error is StateError
+              ? error.message
+              : 'Registration failed. Please try again.',
+        );
+      }
+    } finally {
+      if (mounted) setState(() => isRegistering = false);
+    }
   }
 
   @override
@@ -259,7 +283,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Text(
                 '(Password should be 8 characters, a mixture of letter and numbers consisting of at least one special character with Uppercase and Lowercase letters.)',
                 style: TextStyle(
-                  color: Colors.black45,
+                  color: Colors.black54,
+                  fontFamily: 'Frutiger',
                   fontSize: ScreenUtil().setSp(10),
                 ),
               ),
@@ -296,7 +321,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     'You have an account? ',
                     style: TextStyle(
-                      color: Colors.black45,
+                      color: Colors.black54,
+                      fontFamily: 'Frutiger',
                       fontSize: ScreenUtil().setSp(15),
                     ),
                   ),
@@ -306,6 +332,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Login here',
                       style: TextStyle(
                         color: FB_DARK_PRIMARY,
+                        fontFamily: 'Frutiger',
                         fontSize: ScreenUtil().setSp(15),
                         fontWeight: FontWeight.bold,
                       ),
@@ -315,7 +342,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: ScreenUtil().setHeight(10)),
               CustomInkwellButton(
-                onTap: () => register(),
+                onTap: () {
+                  if (!isRegistering) register();
+                },
                 height: ScreenUtil().setHeight(45),
                 width: ScreenUtil().screenWidth,
                 fontSize: ScreenUtil().setSp(15),

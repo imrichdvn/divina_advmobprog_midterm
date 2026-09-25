@@ -12,16 +12,20 @@ class CommentService {
   String _key(int postId, int userId) => 'comments.$userId.$postId';
 
   Future<List<Comment>> getComments(int postId, int userId) async {
-    final response = await _client
-        .get(Uri.parse('$host/comments/post/$postId?limit=0'))
-        .timeout(const Duration(seconds: 20));
-    if (response.statusCode != 200) {
-      throw StateError('Could not load comments.');
+    var remote = <Comment>[];
+    try {
+      final response = await _client
+          .get(Uri.parse('$host/comments/post/$postId?limit=0'))
+          .timeout(const Duration(seconds: 20));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        remote = (data['comments'] as List? ?? [])
+            .map((json) => Comment.fromJson(json))
+            .toList();
+      }
+    } catch (_) {
+      // Locally saved comments remain available when the demo API is offline.
     }
-    final Map<String, dynamic> data = jsonDecode(response.body);
-    final remote = (data['comments'] as List? ?? [])
-        .map((json) => Comment.fromJson(json))
-        .toList();
     final prefs = await SharedPreferences.getInstance();
     final local = prefs.getStringList(_key(postId, userId)) ?? [];
     return [
@@ -33,21 +37,22 @@ class CommentService {
   Future<Comment> addComment(int postId, User user, String body) async {
     final trimmed = body.trim();
     if (trimmed.isEmpty) throw ArgumentError('Enter a comment.');
-    final response = await _client
-        .post(
-          Uri.parse('$host/comments/add'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'postId': postId,
-            'userId': user.id,
-            'body': trimmed,
-          }),
-        )
-        .timeout(const Duration(seconds: 20));
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      throw StateError('Could not save your comment.');
+    try {
+      await _client
+          .post(
+            Uri.parse('$host/comments/add'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({
+              'postId': postId,
+              'userId': user.id,
+              'body': trimmed,
+            }),
+          )
+          .timeout(const Duration(seconds: 20));
+    } catch (_) {
+      // DummyJSON is best-effort; the local comment is the durable copy.
     }
-    // DummyJSON reuses simulated IDs and does not persist writes.
+
     final comment = Comment(
       id: -DateTime.now().microsecondsSinceEpoch,
       postId: postId,

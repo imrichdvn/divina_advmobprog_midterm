@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/preferences_service.dart';
-import '../services/user_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -28,25 +27,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _signOut() async {
-    await UserService.instance.signOut();
-    PreferencesService.instance.clearLikes();
-    if (!mounted) return;
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Settings')),
     body: ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        ListTile(
-          leading: const Icon(Icons.person_outline),
-          title: Text(UserService.instance.currentUser?.fullName ?? ''),
-          subtitle: Text(UserService.instance.currentUser?.email ?? ''),
-        ),
-        const Divider(),
         const ListTile(
           leading: Icon(Icons.palette_outlined),
           title: Text('Appearance'),
@@ -66,12 +52,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     () => PreferencesService.instance.setTheme(values.first),
                   ),
           ),
-        ),
-        const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: _busy ? null : () => _save(_signOut),
-          icon: const Icon(Icons.logout),
-          label: const Text('Sign Out'),
         ),
       ],
     ),

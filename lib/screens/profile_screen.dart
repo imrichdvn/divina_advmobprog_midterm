@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../models/user.dart';
+import '../services/preferences_service.dart';
+import '../services/user_service.dart';
 import '../widgets/post_list.dart';
 import '../widgets/user_avatar.dart';
 
@@ -46,6 +48,13 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _signOut(BuildContext context) async {
+    await UserService.instance.signOut();
+    PreferencesService.instance.clearLikes();
+    if (!context.mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (_) => false);
+  }
+
   @override
   Widget build(BuildContext context) => DefaultTabController(
     length: 3,
@@ -79,6 +88,17 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _signOut(context),
+                    icon: const Icon(Icons.logout),
+                    label: const Text('Sign Out'),
+                  ),
                 ),
               ),
               const TabBar(

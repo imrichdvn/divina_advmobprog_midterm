@@ -70,7 +70,7 @@ class NotificationScreenState extends State<NotificationScreen> {
       'name': 'Stanley Hudson',
       'post': 'Pretzel Day',
       'description': 'The highlight of the year.',
-      'profileImageUrl': 'stanleyprofile.avif',
+      'profileImageUrl': 'stanleyprofile.jpg',
       'imageUrl': 'stanleypretzel.jpg',
       'date': 'December 17, 2025',
       'numOfLikes': 11,

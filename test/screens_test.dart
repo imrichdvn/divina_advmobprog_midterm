@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cando_mobprog/screens/login_screen.dart';
-import 'package:cando_mobprog/screens/splash_screen.dart';
-import 'package:cando_mobprog/screens/settings_screen.dart';
-import 'package:cando_mobprog/widgets/like_button.dart';
-import 'package:cando_mobprog/services/preferences_service.dart';
-import 'package:cando_mobprog/screens/detail_screen.dart';
-import 'package:cando_mobprog/widgets/post_card.dart';
+import 'package:divina/screens/login_screen.dart';
+import 'package:divina/screens/splash_screen.dart';
+import 'package:divina/screens/settings_screen.dart';
+import 'package:divina/widgets/like_button.dart';
+import 'package:divina/services/preferences_service.dart';
+import 'package:divina/screens/detail_screen.dart';
+import 'package:divina/widgets/post_card.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));

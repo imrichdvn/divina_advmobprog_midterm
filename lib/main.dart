@@ -5,10 +5,10 @@ import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'services/preferences_service.dart';
 
-void main() => runApp(const WillBook());
+void main() => runApp(const SebApp());
 
-class WillBook extends StatelessWidget {
-  const WillBook({super.key});
+class SebApp extends StatelessWidget {
+  const SebApp({super.key});
 
   @override
   Widget build(BuildContext context) => ScreenUtilInit(
@@ -19,16 +19,28 @@ class WillBook extends StatelessWidget {
       valueListenable: PreferencesService.instance.themeMode,
       builder: (context, mode, _) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Willbook',
+        title: 'Divina',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0167F8)),
+          useMaterial3: true,
+          brightness: Brightness.light,
+          scaffoldBackgroundColor: const Color(0xFFF5F9FF),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF1E88E5),
+            brightness: Brightness.light,
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF1E88E5),
+            foregroundColor: Colors.white,
+          ),
           inputDecorationTheme: const InputDecorationTheme(
             border: OutlineInputBorder(),
           ),
         ),
         darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF0167F8),
+            seedColor: const Color(0xFF1E88E5),
             brightness: Brightness.dark,
           ),
           inputDecorationTheme: const InputDecorationTheme(

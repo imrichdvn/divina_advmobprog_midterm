@@ -1,13 +1,16 @@
-import 'package:cando_mobprog/constants.dart';
+import 'package:divina/constants.dart';
 import 'package:flutter/material.dart';
 
-customDialog(BuildContext context, {required title, required content}) {
-  AlertDialog alertDialog = AlertDialog(
+void customDialog(
+  BuildContext context, {
+  required String title,
+  required String content,
+}) {
+  final AlertDialog alertDialog = AlertDialog(
     title: Text(title),
     content: Text(content),
     actions: <Widget>[
       ElevatedButton(
-        child: const Text('Okay'),
         style: ElevatedButton.styleFrom(
           backgroundColor: FB_DARK_PRIMARY,
           foregroundColor: Colors.white,
@@ -15,6 +18,7 @@ customDialog(BuildContext context, {required title, required content}) {
         onPressed: () {
           Navigator.of(context).pop();
         },
+        child: const Text('Okay'),
       ),
     ],
   );

@@ -57,6 +57,7 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFFF3F7FF),
     body: SafeArea(
       child: Center(
         child: SingleChildScrollView(
@@ -70,8 +71,17 @@ class _LogInScreenState extends State<LogInScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Image.asset('assets/images/willbook.png', height: 150),
-                    const SizedBox(height: 32),
+                    const Text(
+                      'Gossipers',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1877F2),
+                        letterSpacing: -1,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     TextFormField(
                       controller: _username,
                       enabled: !_busy,

@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text(
-        ['willbook', 'Notifications', widget.user.userName][_selectedIndex],
+        ['Gossipers', 'Notifications', widget.user.userName][_selectedIndex],
       ),
       actions: [
         IconButton(

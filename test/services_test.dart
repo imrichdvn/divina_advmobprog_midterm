@@ -4,11 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cando_mobprog/models/user.dart';
-import 'package:cando_mobprog/services/user_service.dart';
-import 'package:cando_mobprog/services/post_service.dart';
-import 'package:cando_mobprog/services/comment_service.dart';
-import 'package:cando_mobprog/services/preferences_service.dart';
+import 'package:divina/models/user.dart';
+import 'package:divina/services/user_service.dart';
+import 'package:divina/services/post_service.dart';
+import 'package:divina/services/comment_service.dart';
+import 'package:divina/services/preferences_service.dart';
 
 const userJson = {
   'id': 1,
@@ -64,6 +64,27 @@ void main() {
       (await SharedPreferences.getInstance()).getString('session'),
       isNull,
     );
+  });
+
+  test('registered user can sign in with saved credentials', () async {
+    final service = UserService(
+      client: MockClient(
+        (_) async => throw StateError('Remote login should not be called'),
+      ),
+    );
+    await service.register(
+      firstName: 'Seb',
+      lastName: 'Divina',
+      mobileNumber: '09123456789',
+      username: 'newuser',
+      password: 'Password1!',
+    );
+
+    final user = await service.login('newuser', 'Password1!');
+
+    expect(user.fullName, 'Seb Divina');
+    expect(user.userName, 'newuser');
+    expect(service.currentUser, same(user));
   });
 
   Future<void> saveSession() async {
@@ -211,17 +232,19 @@ void main() {
     },
   );
 
-  test('failed comment request does not save a local comment', () async {
+  test('comment is saved locally when the remote request fails', () async {
     final service = CommentService(
-      client: MockClient((_) async => jsonResponse({}, 500)),
+      client: MockClient((_) async => throw http.ClientException('offline')),
     );
-    await expectLater(
-      service.addComment(8, User.fromJson(userJson), 'Hello'),
-      throwsStateError,
+    final comment = await service.addComment(
+      8,
+      User.fromJson(userJson),
+      'Hello',
     );
+    expect(comment.body, 'Hello');
     expect(
       (await SharedPreferences.getInstance()).getStringList('comments.1.8'),
-      isNull,
+      hasLength(1),
     );
   });
 

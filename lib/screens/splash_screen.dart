@@ -44,6 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFFF3F7FF),
     body: SafeArea(
       child: Center(
         child: Padding(
@@ -51,10 +52,18 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/images/willbook.png', height: 160),
+              const Text(
+                'Gossipers',
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1877F2),
+                  letterSpacing: -1,
+                ),
+              ),
               const SizedBox(height: 32),
               if (_error == null)
-                const CircularProgressIndicator()
+                const CircularProgressIndicator(color: Color(0xFF1877F2))
               else ...[
                 Text(_error!, textAlign: TextAlign.center),
                 const SizedBox(height: 16),

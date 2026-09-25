@@ -1,7 +1,7 @@
 import '../widgets/custom_font.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cando_mobprog/constants.dart';
+import 'package:divina/constants.dart';
 
 import '../models/post.dart';
 import '../screens/detail_screen.dart';
